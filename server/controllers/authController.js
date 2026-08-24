@@ -40,6 +40,40 @@ async function registerUser(req, res) {
     }
 }
 
+async function loginUser(req,res){
+    try{
+        const{email,password}=req.body;
+        if(!email || !password){
+            return res.status(400).json({
+                message:"ALL FEILDS ARE REQUIRED"
+            }) 
+        };
+
+        const user=await authService.loginUser({
+            
+            email,
+            password
+        });
+
+        return res.status(200).json({
+            message:"LOGGED IN SUCCESSFULLY",
+            user:{
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role
+            }
+        });
+    }catch(error){
+         console.error(error);
+
+        return res.status(error.statusCode || 500).json({
+            message: error.message || "Server error"
+        });
+    }
+}
 module.exports = {
-    registerUser
+    registerUser,
+    loginUser
 };

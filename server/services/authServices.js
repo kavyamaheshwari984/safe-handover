@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-
+const jwt=require("jsonwebtoken");
+const secret="my-secret";
 async function registerUser({ name, email, password, phone }) {
 
     const existingUser = await User.findOne({ email });
@@ -23,6 +24,38 @@ async function registerUser({ name, email, password, phone }) {
     return user;
 }
 
+async function loginUser({email,password}){
+    
+        const user= await User.findOne({email});
+        if(!user){
+            const error = new Error("INVALID CREDENTIALS!!!");
+            error.statusCode = 401;
+            throw error;
+        }
+        
+        const isMatch=await bcrypt.compare(password,user.password);
+        if(!isMatch){
+            const error = new Error("INVALID CREDENTIALS!!!");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        //  const token = jwt.sign(
+        //     {
+        //         userId: user._id.toString(),
+        //         role: user.role
+        //     },
+        //     secret,
+        //     {
+        //         expiresIn: "1h"
+        //     }
+        // );
+
+        return user;
+    
+}
+
 module.exports = {
-    registerUser
+    registerUser,
+    loginUser
 };
