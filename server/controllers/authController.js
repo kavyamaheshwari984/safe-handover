@@ -49,7 +49,7 @@ async function loginUser(req,res){
             }) 
         };
 
-        const user=await authService.loginUser({
+        const {user,token}=await authService.loginUser({
             
             email,
             password
@@ -57,6 +57,7 @@ async function loginUser(req,res){
 
         return res.status(200).json({
             message:"LOGGED IN SUCCESSFULLY",
+            token,
             user:{
                 id: user._id,
                 name: user.name,

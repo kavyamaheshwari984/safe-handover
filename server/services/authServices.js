@@ -40,18 +40,20 @@ async function loginUser({email,password}){
             throw error;
         }
 
-        //  const token = jwt.sign(
-        //     {
-        //         userId: user._id.toString(),
-        //         role: user.role
-        //     },
-        //     secret,
-        //     {
-        //         expiresIn: "1h"
-        //     }
-        // );
-
-        return user;
+        const token = jwt.sign(
+        {
+                userId: user._id.toString(),
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN
+            }
+        );
+        return {
+            user,
+            token
+        };
     
 }
 
