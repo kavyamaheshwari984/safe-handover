@@ -7,6 +7,7 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
 const authRouter=require("./routes/authRoutes");
+const childRouter = require("./routes/childRoutes");
 const app = express();
 
 connectDB();
@@ -17,7 +18,7 @@ app.get("/", (req, res) => {
     res.send("Safe Handover API is running");
 });
 app.use("/api/auth", authRouter);
-
+app.use("/api/children",childRouter);
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
