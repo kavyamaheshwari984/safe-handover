@@ -19,7 +19,9 @@ const GuardianAuthorizationSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        required: true
+        enum: ["pending", "approved", "rejected", "expired"],
+        default: "pending",
+        required:true
     },
 
     validUntil: {

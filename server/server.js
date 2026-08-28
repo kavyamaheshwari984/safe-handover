@@ -8,6 +8,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 const authRouter=require("./routes/authRoutes");
 const childRouter = require("./routes/childRoutes");
+const guardianAuthorizationRouter=require("./routes/guardianAuthorizationRoutes");
 const app = express();
 
 connectDB();
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/auth", authRouter);
 app.use("/api/children",childRouter);
+app.use("/api/guardian-authorizations",guardianAuthorizationRouter);
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {

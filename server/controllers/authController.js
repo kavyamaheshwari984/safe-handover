@@ -4,9 +4,9 @@ async function registerUser(req, res) {
 
     try {
 
-        const { name, email, password, phone } = req.body;
+        const { name, email, password, phone,role } = req.body;
 
-        if (!name || !email || !password || !phone) {
+        if (!name || !email || !password || !phone ||!role) {
             return res.status(400).json({
                 message: "All fields are required"
             });
@@ -16,7 +16,8 @@ async function registerUser(req, res) {
             name,
             email,
             password,
-            phone
+            phone,
+            role
         });
 
         return res.status(201).json({

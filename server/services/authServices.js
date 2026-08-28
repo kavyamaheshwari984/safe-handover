@@ -2,10 +2,18 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt=require("jsonwebtoken");
 
-async function registerUser({ name, email, password, phone }) {
+async function registerUser({ name, email, password, phone,role }) {
+
+    
+    const allowedRoles = ["parent", "guardian"];
+
+    if (!allowedRoles.includes(role)) {
+        const error = new Error("Role must be either parent or guardian");
+        error.statusCode = 400;
+        throw error;
+    }
 
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
         const error = new Error("Email already registered");
         error.statusCode = 409;
@@ -18,7 +26,8 @@ async function registerUser({ name, email, password, phone }) {
         name,
         email,
         password: hashedPassword,
-        phone
+        phone,
+        role
     });
 
     return user;
