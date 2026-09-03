@@ -1,7 +1,8 @@
 const PickupRequest = require("../models/pickupRequest");
 const Child = require("../models/child");
 const GuardianAuthorization = require("../models/guardianAuthorization");
-
+const auditLogService =
+    require("./auditLogService");
 
 async function createPickupRequest(userId, role, childId) {
 
@@ -72,6 +73,20 @@ async function createPickupRequest(userId, role, childId) {
 
             status: "PENDING"
         });
+    await auditLogService.createAuditLog(
+
+        "PICKUP_REQUEST_CREATED",
+
+        userId,
+
+        childId,
+
+        pickupRequest._id,
+
+        null,
+
+        "Pickup request created"
+    );
 
     return pickupRequest;
 }
@@ -397,6 +412,8 @@ async function updatePickupRequestStatus(
 
         request.pickupExpiresAt =
             pickupExpiresAt;
+        
+      
     }
 
 
@@ -406,10 +423,40 @@ async function updatePickupRequestStatus(
         request.status = "REJECTED";
 
         request.rejectedAt = new Date();
+
+        request.otp = undefined;
+        request.otpExpiresAt = undefined;
+       
+                
     }
 
 
     await request.save();
+
+    if (status === "APPROVED") {
+
+        await auditLogService.createAuditLog(
+            "PICKUP_REQUEST_APPROVED",
+            userId,
+            child._id,
+            request._id,
+            null,
+            "Pickup request approved"
+        );
+
+    } else {
+
+        await auditLogService.createAuditLog(
+            "PICKUP_REQUEST_REJECTED",
+            userId,
+            child._id,
+            request._id,
+            null,
+            "Pickup request rejected"
+        );
+    }
+
+    
 
     return request;
 }
@@ -491,6 +538,9 @@ async function cancelPickupRequest(
 
 
     request.status = "CANCELLED";
+
+    request.otp = undefined;
+    request.otpExpiresAt = undefined;
 
     await request.save();
 

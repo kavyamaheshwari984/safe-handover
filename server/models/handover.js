@@ -14,7 +14,7 @@ const HandoverSchema = new mongoose.Schema({
         required: true
     },
 
-    guardian: {
+    pickedUpBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
@@ -29,6 +29,11 @@ const HandoverSchema = new mongoose.Schema({
     handedOverAt: {
         type: Date,
         default: Date.now
+    },
+    verificationMethod: {
+        type: String,
+        enum: ["OTP"],
+        default: "OTP"
     }
 });
 
