@@ -34,7 +34,7 @@ router.post(
 router.get(
     "/",
     authenticateUser,
-    authorizeRoles("parent", "admin"),
+    authorizeRoles("parent", "guardian", "admin"),
     getAuthorizations
 );
 

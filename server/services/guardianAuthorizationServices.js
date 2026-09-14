@@ -104,6 +104,13 @@ async function getAuthorizations(userId, role) {
                     "name className rollNo"
                 );
 
+    } else if (role === "guardian") {
+
+        authorizations = await GuardianAuthorization
+            .find({ guardian: userId })
+            .populate("guardian", "name email phone")
+            .populate("child", "name className rollNo");
+
     } else {
 
         // Parent sees authorizations

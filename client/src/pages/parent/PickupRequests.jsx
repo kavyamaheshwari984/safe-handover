@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { pickupRequestApi } from '../../api/pickupRequestApi';
 import { childrenApi } from '../../api/childrenApi';
+import { guardianAuthApi } from '../../api/guardianAuthApi';
 import DataTable from '../../components/DataTable';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import StatusBadge from '../../components/StatusBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 
 const PickupRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -14,17 +16,23 @@ const PickupRequests = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [childId, setChildId] = useState('');
+  const { user } = useAuth();
 
   const fetchData = async () => {
     try {
-      const [reqRes, childRes] = await Promise.all([
-        pickupRequestApi.getRequests(),
-        childrenApi.getAllChildren()
-      ]);
+      const requestsPromise = pickupRequestApi.getRequests();
+      const childrenPromise = user.role === 'guardian'
+        ? guardianAuthApi.getAuthorizations()
+        : childrenApi.getAllChildren();
+      const [reqRes, childRes] = await Promise.all([requestsPromise, childrenPromise]);
       setRequests(reqRes.requests);
-      setChildren(childRes.children);
+      setChildren(user.role === 'guardian'
+        ? childRes.authorizations
+          .filter(auth => auth.status === 'approved' && auth.child)
+          .map(auth => auth.child)
+        : childRes.children);
     } catch (error) {
-      toast.error('Failed to load data');
+      toast.error(error.response?.data?.message || 'Failed to load data');
     } finally {
       setLoading(false);
     }
