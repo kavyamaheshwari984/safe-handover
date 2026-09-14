@@ -1,6 +1,6 @@
 const AuditLog = require("../models/auditLog");
 const Child = require("../models/child");
-const pickupRequest = require("../models/pickupRequest");
+const PickupRequest = require("../models/pickupRequest");
 
 async function createAuditLog(
     action,
