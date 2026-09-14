@@ -110,6 +110,10 @@ const PickupRequests = () => {
       cell: (row) => row.child?.name
     },
     {
+      header: 'Request ID',
+      cell: (row) => row._id
+    },
+    {
       header: 'Requested By',
       cell: (row) => row.requestedBy?.name
     },
