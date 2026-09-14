@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { guardianAuthApi } from '../../api/guardianAuthApi';
+import { authApi } from '../../api/authApi';
 import { childrenApi } from '../../api/childrenApi';
 import DataTable from '../../components/DataTable';
 import Button from '../../components/Button';
@@ -12,18 +13,21 @@ import toast from 'react-hot-toast';
 const GuardianAuth = () => {
   const [authorizations, setAuthorizations] = useState([]);
   const [children, setChildren] = useState([]);
+  const [guardians, setGuardians] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ guardianId: '', childId: '', relationship: '', validUntil: '' });
 
   const fetchData = async () => {
     try {
-      const [authRes, childRes] = await Promise.all([
+      const [authRes, childRes, guardianRes] = await Promise.all([
         guardianAuthApi.getAuthorizations(),
-        childrenApi.getAllChildren()
+        childrenApi.getAllChildren(),
+        authApi.getGuardians()
       ]);
       setAuthorizations(authRes.authorizations);
       setChildren(childRes.children);
+      setGuardians(guardianRes.guardians);
     } catch (error) {
       toast.error('Failed to load data');
     } finally {
@@ -127,7 +131,20 @@ const GuardianAuth = () => {
               ))}
             </select>
           </div>
-          <FormInput label="Guardian User ID (must be registered as guardian)" name="guardianId" value={formData.guardianId} onChange={handleChange} required />
+          <div className="form-group">
+            <label className="form-label" htmlFor="guardianId">Guardian</label>
+            <select id="guardianId" name="guardianId" className="form-input" value={formData.guardianId} onChange={handleChange} required>
+              <option value="">Select Guardian</option>
+              {guardians.map(guardian => (
+                <option key={guardian._id} value={guardian._id}>
+                  {guardian.name} ({guardian.email})
+                </option>
+              ))}
+            </select>
+            {guardians.length === 0 && (
+              <div className="form-help">Register a guardian account before authorizing one.</div>
+            )}
+          </div>
           <FormInput label="Relationship (e.g. Uncle, Grandparent)" name="relationship" value={formData.relationship} onChange={handleChange} required />
           <FormInput label="Valid Until" name="validUntil" type="date" value={formData.validUntil} onChange={handleChange} required />
           <div className="flex justify-end mt-4">

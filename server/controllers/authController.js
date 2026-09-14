@@ -76,7 +76,20 @@ async function loginUser(req,res){
         });
     }
 }
+
+async function getGuardians(req, res) {
+    try {
+        const guardians = await authService.getGuardians();
+        return res.status(200).json({ guardians });
+    } catch (error) {
+        console.error(error);
+        return res.status(error.statusCode || 500).json({
+            message: error.message || "Server error"
+        });
+    }
+}
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getGuardians
 };

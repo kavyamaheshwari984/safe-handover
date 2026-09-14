@@ -72,7 +72,15 @@ async function loginUser({email,password,role}){
     
 }
 
+async function getGuardians() {
+    return User.find({ role: "guardian" })
+        .select("name email phone")
+        .sort({ name: 1 })
+        .lean();
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getGuardians
 };
