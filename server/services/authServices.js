@@ -33,11 +33,17 @@ async function registerUser({ name, email, password, phone,role }) {
     return user;
 }
 
-async function loginUser({email,password}){
+async function loginUser({email,password,role}){
     
         const user= await User.findOne({email});
         if(!user){
             const error = new Error("INVALID CREDENTIALS!!!");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        if (role && user.role !== role) {
+            const error = new Error("Selected role does not match this account");
             error.statusCode = 401;
             throw error;
         }

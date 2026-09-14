@@ -43,7 +43,7 @@ async function registerUser(req, res) {
 
 async function loginUser(req,res){
     try{
-        const{email,password}=req.body;
+        const{email,password,role}=req.body;
         if(!email || !password){
             return res.status(400).json({
                 message:"ALL FEILDS ARE REQUIRED"
@@ -53,7 +53,8 @@ async function loginUser(req,res){
         const {user,token}=await authService.loginUser({
             
             email,
-            password
+            password,
+            role
         });
 
         return res.status(200).json({

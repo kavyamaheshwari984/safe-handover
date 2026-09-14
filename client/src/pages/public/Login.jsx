@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import toast from 'react-hot-toast';
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [credentials, setCredentials] = useState({ email: '', password: '', role: 'parent' });
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -51,6 +51,22 @@ const Login = () => {
           onChange={handleChange}
           required
         />
+        <div className="form-group">
+          <label className="form-label" htmlFor="role">Login as</label>
+          <select
+            id="role"
+            name="role"
+            className="form-input"
+            value={credentials.role}
+            onChange={handleChange}
+            required
+          >
+            <option value="parent">Parent</option>
+            <option value="guardian">Guardian</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
         <Button 
           type="submit" 
           variant="primary" 
